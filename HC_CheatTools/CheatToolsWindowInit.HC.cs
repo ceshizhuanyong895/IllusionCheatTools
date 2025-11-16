@@ -34,7 +34,7 @@ namespace CheatTools
             };
 
             CheatToolsWindow.Cheats.Add(new CheatEntry(w => H.HSceneFlagCtrl._instance != null, DrawHSceneCheats, null));
-            CheatToolsWindow.Cheats.Add(new CheatEntry(w => H.HSceneFlagCtrl._instance != null && Manager.HSceneManager._instance != null, DrawGirlCheatMenu, "Unable to edit character stats on this screen.\nYou have to start an H scene, edit the character, and finish the H scene to save changes."));
+            CheatToolsWindow.Cheats.Add(new CheatEntry(w => H.HSceneFlagCtrl._instance != null && Manager.HSceneManager._instance != null, DrawGirlCheatMenu, "無法在此畫面編輯角色狀態。\n您必須開始 H 場景，編輯角色，並完成 H 場景才能儲存變更。"));
             CheatToolsWindow.Cheats.Add(CheatEntry.CreateOpenInInspectorButtons(() => _openInInspectorButtons));
             CheatToolsWindow.Cheats.Add(new CheatEntry(w => Manager.Game.SaveData != null, DrawGlobalUnlocks, null));
 
@@ -43,9 +43,9 @@ namespace CheatTools
 
         private static void DrawGlobalUnlocks(CheatToolsWindow obj)
         {
-            GUILayout.Label("Danger zone! These cheats are permanent and can't be undone without resetting the save.");
+            GUILayout.Label("危險區域！這些作弊是永久性的，除非重設存檔，否則無法復原。");
 
-            if (GUILayout.Button("Get all achievements", GUILayout.ExpandWidth(true)))
+            if (GUILayout.Button("獲得所有成就", GUILayout.ExpandWidth(true)))
             {
                 var achievementKeys = new List<int>();
                 foreach (var achievementKey in Manager.Game.SaveData.Achievement.Keys)
@@ -55,7 +55,7 @@ namespace CheatTools
                     HC.SaveData.SaveData.UnlockAchievement(achievementKey);
             }
 
-            if (GUILayout.Button("Unlock all perks", GUILayout.ExpandWidth(true)))
+            if (GUILayout.Button("解鎖所有特權", GUILayout.ExpandWidth(true)))
             {
                 var achievementKeys = new List<int>();
                 foreach (var achievementKey in Manager.Game.SaveData.AchievementExchange.Keys)
@@ -70,37 +70,37 @@ namespace CheatTools
         {
             var hScene = H.HSceneFlagCtrl._instance;
 
-            GUILayout.Label("H scene controls");
+            GUILayout.Label("H 場景控制");
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Male Gauge: " + hScene.Feel_m.ToString("F2"), GUILayout.Width(150));
+                GUILayout.Label("男性計量條： " + hScene.Feel_m.ToString("F2"), GUILayout.Width(150));
                 hScene.Feel_m = GUILayout.HorizontalSlider(hScene.Feel_m, 0, 1);
             }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Female Gauge: " + hScene.Feel_f.ToString("F2"), GUILayout.Width(150));
+                GUILayout.Label("女性計量條： " + hScene.Feel_f.ToString("F2"), GUILayout.Width(150));
                 hScene.Feel_f = GUILayout.HorizontalSlider(hScene.Feel_f, 0, 1);
             }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Pain Gauge: " + hScene.FeelPain.ToString("F2"), GUILayout.Width(150));
+                GUILayout.Label("痛苦計量條： " + hScene.FeelPain.ToString("F2"), GUILayout.Width(150));
                 hScene.FeelPain = GUILayout.HorizontalSlider(hScene.FeelPain, 0, 1);
             }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Spank Gauge: " + hScene.FeelSpnking.ToString("F2"), GUILayout.Width(150));
+                GUILayout.Label("打屁股計量條： " + hScene.FeelSpnking.ToString("F2"), GUILayout.Width(150));
                 hScene.FeelSpnking = GUILayout.HorizontalSlider(hScene.FeelSpnking, 0, 1);
             }
             GUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Open HScene Flags in inspector"))
+            if (GUILayout.Button("在檢視器中開啟 HScene Flags"))
                 Inspector.Instance.Push(new InstanceStackEntry(hScene, "HSceneFlagCtrl"), true);
         }
 
@@ -111,7 +111,7 @@ namespace CheatTools
 
         private static void DrawGirlCheatMenu(CheatToolsWindow cheatToolsWindow)
         {
-            GUILayout.Label("Character status editor");
+            GUILayout.Label("角色狀態編輯器");
 
             var visibleGirls = Manager.HSceneManager._instance.Females; //Character.Human._list;
 
@@ -119,7 +119,7 @@ namespace CheatTools
             {
                 var girl = visibleGirls[i];
                 if (girl == null) continue;
-                if (GUILayout.Button($"Select #{i} - {GetHeroineName(girl)}"))
+                if (GUILayout.Button($"選擇 #{i} - {GetHeroineName(girl)}"))
                     _currentVisibleGirl = girl;
             }
 
@@ -128,14 +128,14 @@ namespace CheatTools
             if (_currentVisibleGirl != null)
                 DrawSingleGirlCheats(_currentVisibleGirl);
             else
-                GUILayout.Label("Select a character to edit their stats");
+                GUILayout.Label("請選擇一個角色來編輯其狀態");
         }
 
         private static void DrawSingleGirlCheats(Human currentAdvGirl)
         {
             GUILayout.BeginVertical(GUI.skin.box);
             {
-                GUILayout.Label("Selected heroine name: " + GetHeroineName(currentAdvGirl));
+                GUILayout.Label("已選女主角名稱： " + GetHeroineName(currentAdvGirl));
                 GUILayout.Space(6);
 
                 var gi = currentAdvGirl.fileGameInfo;
@@ -162,7 +162,7 @@ namespace CheatTools
 
                     GUILayout.BeginHorizontal();
                     {
-                        GUILayout.Label("Current state: " + gi.nowState);
+                        GUILayout.Label("目前狀態： " + gi.nowState);
                         GUILayout.FlexibleSpace();
                         DrawSingleStateBtn(ChaFileDefine.State.Blank);
                     }
@@ -184,14 +184,14 @@ namespace CheatTools
 
                     GUILayout.Space(6);
 
-                    GUILayout.Label("Statistics:");
+                    GUILayout.Label("統計數據：");
 
                     void ShowSingleSlider(string name, Action<int> set, Func<int> get)
                     {
                         GUILayout.BeginHorizontal();
                         {
                             var status = get();
-                            GUILayout.Label(name + ": " + status, GUILayout.Width(120));
+                            GUILayout.Label(name + "： " + status, GUILayout.Width(120));
                             var newStatus = Mathf.RoundToInt(GUILayout.HorizontalSlider(status, 0, 100));
                             if (newStatus != status)
                             {
@@ -206,7 +206,7 @@ namespace CheatTools
                     {
                         GUILayout.BeginHorizontal();
                         {
-                            GUILayout.Label(name + ": ", GUILayout.Width(120));
+                            GUILayout.Label(name + "： ", GUILayout.Width(120));
                             GUI.changed = false;
                             var status = get();
                             var textField = GUILayout.TextField(status.ToString());
@@ -221,41 +221,41 @@ namespace CheatTools
                         GUILayout.EndHorizontal();
                     }
 
-                    ShowSingleSlider(nameof(gi.Favor), i => gi.Favor = i, () => gi.Favor);
-                    ShowSingleSlider(nameof(gi.Enjoyment), i => gi.Enjoyment = i, () => gi.Enjoyment);
-                    ShowSingleSlider(nameof(gi.Aversion), i => gi.Aversion = i, () => gi.Aversion);
-                    ShowSingleSlider(nameof(gi.Slavery), i => gi.Slavery = i, () => gi.Slavery);
-                    ShowSingleSlider(nameof(gi.Broken), i => gi.Broken = i, () => gi.Broken);
-                    ShowSingleSlider(nameof(gi.Dependence), i => gi.Dependence = i, () => gi.Dependence);
-                    ShowSingleSlider(nameof(gi.Dirty), i => gi.Dirty = i, () => gi.Dirty);
-                    ShowSingleSlider(nameof(gi.Tiredness), i => gi.Tiredness = i, () => gi.Tiredness);
-                    ShowSingleSlider(nameof(gi.Toilet), i => gi.Toilet = i, () => gi.Toilet);
-                    ShowSingleSlider(nameof(gi.Libido), i => gi.Libido = i, () => gi.Libido);
+                    ShowSingleSlider("好感度", i => gi.Favor = i, () => gi.Favor);
+                    ShowSingleSlider("愉悅", i => gi.Enjoyment = i, () => gi.Enjoyment);
+                    ShowSingleSlider("厭惡", i => gi.Aversion = i, () => gi.Aversion);
+                    ShowSingleSlider("奴役", i => gi.Slavery = i, () => gi.Slavery);
+                    ShowSingleSlider("崩壞", i => gi.Broken = i, () => gi.Broken);
+                    ShowSingleSlider("依賴", i => gi.Dependence = i, () => gi.Dependence);
+                    ShowSingleSlider("骯髒", i => gi.Dirty = i, () => gi.Dirty);
+                    ShowSingleSlider("疲勞", i => gi.Tiredness = i, () => gi.Tiredness);
+                    ShowSingleSlider("尿意", i => gi.Toilet = i, () => gi.Toilet);
+                    ShowSingleSlider("性慾", i => gi.Libido = i, () => gi.Libido);
 
-                    ShowSingleSlider(nameof(gi.alertness), i => gi.alertness = i, () => gi.alertness);
+                    ShowSingleSlider("警戒", i => gi.alertness = i, () => gi.alertness);
 
-                    ShowSingleTextfield(nameof(gi.hCount), i => { gi.hCount = i; if (i == 0) gi.firstHFlag = true; }, () => gi.hCount);
+                    ShowSingleTextfield("H 次數", i => { gi.hCount = i; if (i == 0) gi.firstHFlag = true; }, () => gi.hCount);
 
                     //todo allow changing in lobby, needed for persisting the changes
                     // if (anyChanges)
                     //     _onGirlStatsChanged(_currentVisibleGirl);
 
-                    if (GUILayout.Button("View more stats and flags"))
-                        Inspector.Instance.Push(new InstanceStackEntry(gi, "Heroine " + GetHeroineName(currentAdvGirl)), true);
+                    if (GUILayout.Button("查看更多狀態與旗標"))
+                        Inspector.Instance.Push(new InstanceStackEntry(gi, "女主角 " + GetHeroineName(currentAdvGirl)), true);
                 }
 
                 GUILayout.Space(6);
 
-                if (GUILayout.Button("Navigate to Heroine's GameObject"))
+                if (GUILayout.Button("導航至女主角的遊戲物件 (GameObject)"))
                 {
                     if (currentAdvGirl.transform != null)
                         ObjectTreeViewer.Instance.SelectAndShowObject(currentAdvGirl.transform);
                     else
-                        CheatToolsPlugin.Logger.Log(LogLevel.Warning | LogLevel.Message, "Heroine has no body assigned");
+                        CheatToolsPlugin.Logger.Log(LogLevel.Warning | LogLevel.Message, "女主角沒有分配身體模型");
                 }
 
-                if (GUILayout.Button("Open Heroine in inspector"))
-                    Inspector.Instance.Push(new InstanceStackEntry(currentAdvGirl, "Heroine " + GetHeroineName(currentAdvGirl)), true);
+                if (GUILayout.Button("在檢視器中開啟女主角"))
+                    Inspector.Instance.Push(new InstanceStackEntry(currentAdvGirl, "女主角 " + GetHeroineName(currentAdvGirl)), true);
 
                 //if (GUILayout.Button("Inspect extended data"))
                 //{

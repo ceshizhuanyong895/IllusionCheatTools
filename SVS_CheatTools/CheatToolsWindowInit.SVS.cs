@@ -89,7 +89,7 @@ namespace CheatTools
             CheatToolsWindow.Cheats.Add(new CheatEntry(_ => InsideH, DrawHSceneCheats, null));
             CheatToolsWindow.Cheats.Add(new CheatEntry(_ => InsideADV, DrawAdvCheats, null));
             CheatToolsWindow.Cheats.Add(new CheatEntry(_ => Manager.Game.saveData.WorldTime > 0, DrawGeneralCheats, null));
-            CheatToolsWindow.Cheats.Add(new CheatEntry(_ => Manager.Game.Charas.Count > 0, DrawGirlCheatMenu, "Unable to edit character stats on this screen or there are no characters. Load a saved game or start a new game and add characters to the roster."));
+            CheatToolsWindow.Cheats.Add(new CheatEntry(_ => Manager.Game.Charas.Count > 0, DrawGirlCheatMenu, "無法在此畫面編輯角色狀態，或沒有角色。請讀取存檔或開始新遊戲並將角色加入名冊。"));
             CheatToolsWindow.Cheats.Add(CheatEntry.CreateOpenInInspectorButtons(() => _openInInspectorButtons));
 
             Harmony.CreateAndPatchAll(typeof(Hooks));
@@ -99,13 +99,13 @@ namespace CheatTools
         {
             var hScene = SV.H.HScene._instance;
 
-            GUILayout.Label("H scene controls");
+            GUILayout.Label("H 場景控制");
 
             foreach (var actor in hScene.Actors)
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label(actor.Name + " Gauge: " + actor.GaugeValue.ToString("N1"), GUILayout.Width(150));
+                    GUILayout.Label(actor.Name + " 計量條： " + actor.GaugeValue.ToString("N1"), GUILayout.Width(150));
                     GUI.changed = false;
                     var newValue = GUILayout.HorizontalSlider(actor.GaugeValue, 0, 100);
                     if (GUI.changed)
@@ -125,16 +125,16 @@ namespace CheatTools
 
             DrawBackgroundHideToggles();
 
-            if (GUILayout.Button("Open HScene in inspector"))
+            if (GUILayout.Button("在檢視器中開啟 HScene"))
                 Inspector.Instance.Push(new InstanceStackEntry(hScene, "SV.H.HScene"), true);
         }
 
         private static GameObject _bgPanel, _bgDownFrame, _bgUpFrame;
         private static void DrawAdvCheats(CheatToolsWindow cheatToolsWindow)
         {
-            GUILayout.Label("ADV scene controls");
+            GUILayout.Label("ADV 場景控制");
 
-            if (GUILayout.Button(new GUIContent("Force Unlock visible talk options", null, "Un-gray and make clickable all currently visible buttons in the talk menu. Mostly for use with the blackmail menu. If the chance is 0% you still won't be able to succeed at the action.")))
+            if (GUILayout.Button(new GUIContent("強制解鎖可見的對話選項", null, "將目前所有可見的按鈕變為可點擊狀態（反灰解除）。主要用於威脅選單。如果成功率為 0%，您仍然無法成功執行該動作。")))
             {
                 var commandUi = UnityEngine.Object.FindObjectOfType<SV.CommandUI>();
                 // For some reason buttons are found and set as interactable, but if they are in a hidden menu they revert to inactive when unhidden
@@ -158,7 +158,7 @@ namespace CheatTools
             }
 
             var prevActive = _bgDownFrame.activeSelf;
-            var newActive = GUILayout.Toggle(prevActive, "Show background frame");
+            var newActive = GUILayout.Toggle(prevActive, "顯示背景框");
             if (prevActive != newActive)
             {
                 _bgDownFrame.active = newActive;
@@ -167,44 +167,44 @@ namespace CheatTools
 
             // There is also a saturation effect that is not disabled by this at 'SimulationScene/Global Volume', didn't find a clean way to disable that one
             prevActive = _bgPanel.activeSelf;
-            newActive = GUILayout.Toggle(prevActive, "Show background blur");
+            newActive = GUILayout.Toggle(prevActive, "顯示背景模糊");
             if (prevActive != newActive)
                 _bgPanel.active = newActive;
         }
 
         private static void DrawGeneralCheats(CheatToolsWindow cheatToolsWindow)
         {
-            Hooks.RiggedRng = GUILayout.Toggle(Hooks.RiggedRng, new GUIContent("Rigged RNG (success if above 0%)", null, "All actions with at least 1% chance will always succeed. Must be activated BEFORE talking to a character.\nWARNING: This will affect RNG across the game. NPCs will (probably) always succeed with their actions which will skew the simulation heavily. Some events might never happen or keep repeating until this is turned off."));
+            Hooks.RiggedRng = GUILayout.Toggle(Hooks.RiggedRng, new GUIContent("操縱 RNG (成功率高於 0% 即成功)", null, "所有成功率至少 1% 的動作都將永遠成功。必須在與角色對話前啟用。\n警告：這將影響整個遊戲的 RNG。NPC（可能）將永遠成功執行他們的動作，這將嚴重扭曲模擬。某些事件可能永遠不會發生，或不斷重複，直到關閉此選項。"));
 
             GUILayout.Space(5);
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("Walking speed:");
+                GUILayout.Label("行走速度：");
 
                 var normal = Hooks.SpeedMode == Hooks.SpeedModes.Normal || Hooks.SpeedMode == Hooks.SpeedModes.ReturnToNormal;
-                var newNormal = GUILayout.Toggle(normal, "Normal");
+                var newNormal = GUILayout.Toggle(normal, "普通");
                 if (!normal && newNormal)
                     Hooks.SpeedMode = Hooks.SpeedModes.ReturnToNormal;
-                if (GUILayout.Toggle(Hooks.SpeedMode == Hooks.SpeedModes.Fast, "Fast"))
+                if (GUILayout.Toggle(Hooks.SpeedMode == Hooks.SpeedModes.Fast, "快速"))
                     Hooks.SpeedMode = Hooks.SpeedModes.Fast;
-                if (GUILayout.Toggle(Hooks.SpeedMode == Hooks.SpeedModes.Sanic, "Sanic"))
+                if (GUILayout.Toggle(Hooks.SpeedMode == Hooks.SpeedModes.Sanic, "音速小子"))
                     Hooks.SpeedMode = Hooks.SpeedModes.Sanic;
             }
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             {
-                Hooks.InterruptBlock = GUILayout.Toggle(Hooks.InterruptBlock, new GUIContent("Block interrupts", null, "Prevent NPCs from interrupting interactions of 2 other characters. This does not prevent NPCs from talking to idle characters."));
-                Hooks.InterruptBlockAllow3P = GUILayout.Toggle(Hooks.InterruptBlockAllow3P, new GUIContent("except 3P", null, "Do not block NPCs interrupting to ask for a threesome."));
-                Hooks.InterruptBlockAllowNonPlayer = GUILayout.Toggle(Hooks.InterruptBlockAllowNonPlayer, new GUIContent("only player", null, "Only block interrupts if player controls one of the involved characters."));
+                Hooks.InterruptBlock = GUILayout.Toggle(Hooks.InterruptBlock, new GUIContent("阻擋打擾", null, "防止 NPC 打斷其他 2 個角色之間的互動。這不會阻止 NPC 與閒置角色交談。"));
+                Hooks.InterruptBlockAllow3P = GUILayout.Toggle(Hooks.InterruptBlockAllow3P, new GUIContent("3P 除外", null, "不要阻擋 NPC 為了要求 3P 而打斷。"));
+                Hooks.InterruptBlockAllowNonPlayer = GUILayout.Toggle(Hooks.InterruptBlockAllowNonPlayer, new GUIContent("僅限玩家", null, "僅當玩家控制其中一名相關角色時才阻擋打擾。"));
             }
             GUILayout.EndHorizontal();
 
             GUILayout.Space(5);
 
             GUI.enabled = !ReferenceEquals(SV.GameChara.PlayerAI, null);
-            if (GUILayout.Button("Unlimited time limit for current period"))
+            if (GUILayout.Button("目前時段無限時間"))
                 SV.GameChara.PlayerAI!.charaData.charasGameParam.baseParameter.NowStamina = 100000;
             GUI.enabled = true;
 
@@ -222,9 +222,9 @@ namespace CheatTools
             //    }
             //}
 
-            DrawUtils.DrawNums("Weekday", 7, () => (byte)Manager.Game.saveData.Week, b => Manager.Game.saveData.Week = b);
+            DrawUtils.DrawNums("星期幾", 7, () => (byte)Manager.Game.saveData.Week, b => Manager.Game.saveData.Week = b);
 
-            DrawUtils.DrawInt("Day count", () => Manager.Game.saveData.Day, i => Manager.Game.saveData.Day = i, "Total number of days passed in-game. Used for calculating menstruation status and probably other things.");
+            DrawUtils.DrawInt("總日數", () => Manager.Game.saveData.Day, i => Manager.Game.saveData.Day = i, "遊戲中經過的總日數。用於計算月經狀態以及可能其他事項。");
 
             //GUILayout.BeginHorizontal();
             //{
@@ -235,13 +235,13 @@ namespace CheatTools
 
         private static void DrawGirlCheatMenu(CheatToolsWindow cheatToolsWindow)
         {
-            GUILayout.Label("Character status editor");
+            GUILayout.Label("角色狀態編輯器");
 
             foreach (var chara in GameUtilities.GetCurrentActors(false))
             {
                 var main = chara.Value.FindMainActorInstance();
                 var isCopy = !ReferenceEquals(main.Value, chara.Value);
-                if (GUILayout.Button($"Select #{chara.Key} - {chara.Value.GetCharaName(true)}{(isCopy ? " (Copy)" : "")}"))
+                if (GUILayout.Button($"選擇 #{chara.Key} - {chara.Value.GetCharaName(true)}{(isCopy ? " (副本)" : "")}"))
                 {
                     _currentVisibleChara = chara.Value;
                     _currentVisibleCharaMain = isCopy ? main.Value : null;
@@ -255,7 +255,7 @@ namespace CheatTools
                 if (_currentVisibleChara != null)
                     DrawSingleCharaCheats(_currentVisibleChara, _currentVisibleCharaMain, cheatToolsWindow);
                 else
-                    GUILayout.Label("Select a character to edit their stats");
+                    GUILayout.Label("請選擇一個角色來編輯其狀態");
             }
             catch (Exception e)
             {
@@ -273,11 +273,11 @@ namespace CheatTools
             {
                 GUILayout.BeginHorizontal();
                 {
-                    GUILayout.Label("Selected:", IMGUIUtils.LayoutOptionsExpandWidthFalse);
+                    GUILayout.Label("已選擇：", IMGUIUtils.LayoutOptionsExpandWidthFalse);
                     GUILayout.FlexibleSpace();
                     GUILayout.Label(currentAdvChara.GetCharaName(true), IMGUIUtils.LayoutOptionsExpandWidthFalse);
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button("Close", IMGUIUtils.LayoutOptionsExpandWidthFalse)) _currentVisibleChara = null;
+                    if (GUILayout.Button("關閉", IMGUIUtils.LayoutOptionsExpandWidthFalse)) _currentVisibleChara = null;
                 }
                 GUILayout.EndHorizontal();
 
@@ -285,11 +285,11 @@ namespace CheatTools
                 {
                     GUILayout.BeginHorizontal();
                     {
-                        GUILayout.Label(new GUIContent("!! This character is a copy !!", null, "All changes made to this characters will be lost after the current scene finishes.\n\n" +
-                                                                                               "If you want to make permanent changes, open the main instance of this character and do your changes there.\n" +
-                                                                                               "You will have to exit and re-enter current scene to propagate the changes to the copied character)."), IMGUIUtils.LayoutOptionsExpandWidthFalse);
+                        GUILayout.Label(new GUIContent("!! 這是個副本角色 !!", null, "對此角色所做的所有變更將在目前場景結束後遺失。\n\n" +
+                                                                                               "如果您想進行永久性變更，請開啟此角色的主要實體並在那裡進行變更。\n" +
+                                                                                               "您將需要退出並重新進入目前場景以將變更傳播到副本角色）。"), IMGUIUtils.LayoutOptionsExpandWidthFalse);
                         GUILayout.FlexibleSpace();
-                        if (GUILayout.Button("Open main"))
+                        if (GUILayout.Button("開啟主要實體"))
                         {
                             _currentVisibleChara = mainChara;
                             _currentVisibleCharaMain = null;
@@ -306,15 +306,15 @@ namespace CheatTools
                     var baseParameter = currentAdvChara.charasGameParam.baseParameter;
 
                     {
-                        GUILayout.Label("In-game stats (changed through gameplay)");
+                        GUILayout.Label("遊戲內數值 (透過遊玩改變)");
 
-                        DrawUtils.DrawSlider(nameof(baseParameter.Stamina), 0, 1000, () => baseParameter.Stamina, val => baseParameter.Stamina = val);
-                        DrawUtils.DrawSlider(nameof(baseParameter.NowStamina), 0, baseParameter.Stamina + 100, () => baseParameter.NowStamina, val => baseParameter.NowStamina = val,
-                                             "When character is controlled by player this field is used for determining how long until the period ends. NPCs don't use it.\nInitial value is equal to 'Stamina + 100'.");
-                        DrawUtils.DrawSlider(nameof(baseParameter.Conversation), 0, 1000, () => baseParameter.Conversation, val => baseParameter.Conversation = val);
-                        DrawUtils.DrawSlider(nameof(baseParameter.Study), 0, 1000, () => baseParameter.Study, val => baseParameter.Study = val);
-                        DrawUtils.DrawSlider(nameof(baseParameter.Living), 0, 1000, () => baseParameter.Living, val => baseParameter.Living = val);
-                        DrawUtils.DrawSlider(nameof(baseParameter.Job), 0, 1000, () => baseParameter.Job, val => baseParameter.Job = val, "Doesn't seem to work, changes get overwritten.");
+                        DrawUtils.DrawSlider("耐力", 0, 1000, () => baseParameter.Stamina, val => baseParameter.Stamina = val);
+                        DrawUtils.DrawSlider("目前耐力", 0, baseParameter.Stamina + 100, () => baseParameter.NowStamina, val => baseParameter.NowStamina = val,
+                                             "當角色由玩家控制時，此欄位用於決定距離時段結束還有多久。NPC 不會使用它。\n初始值等於 '耐力 + 100'。");
+                        DrawUtils.DrawSlider("對話", 0, 1000, () => baseParameter.Conversation, val => baseParameter.Conversation = val);
+                        DrawUtils.DrawSlider("學習", 0, 1000, () => baseParameter.Study, val => baseParameter.Study = val);
+                        DrawUtils.DrawSlider("生活", 0, 1000, () => baseParameter.Living, val => baseParameter.Living = val);
+                        DrawUtils.DrawSlider("工作", 0, 1000, () => baseParameter.Job, val => baseParameter.Job = val, "似乎無效，變更會被覆蓋。");
 
                         GUILayout.Space(6);
                     }
@@ -326,22 +326,22 @@ namespace CheatTools
 
                         GUILayout.BeginHorizontal();
                         {
-                            GUILayout.Label("Menstruation: ");
+                            GUILayout.Label("月經： ");
 
                             GUI.color = currentAdvChara.IsMenstruation(ActorExtensionH.Menstruation.Normal) ? Color.green : Color.white;
-                            if (GUILayout.Button("Normal")) SetMenstruationForDay(currentDayIndex, 0);
+                            if (GUILayout.Button("普通")) SetMenstruationForDay(currentDayIndex, 0);
                             GUI.color = currentAdvChara.IsMenstruation(ActorExtensionH.Menstruation.Safe) ? Color.green : Color.white;
-                            if (GUILayout.Button("Safe")) SetMenstruationForDay(currentDayIndex, 1);
+                            if (GUILayout.Button("安全日")) SetMenstruationForDay(currentDayIndex, 1);
                             GUI.color = currentAdvChara.IsMenstruation(ActorExtensionH.Menstruation.Danger) ? Color.green : Color.white;
-                            if (GUILayout.Button("Danger")) SetMenstruationForDay(currentDayIndex, 2);
+                            if (GUILayout.Button("危險日")) SetMenstruationForDay(currentDayIndex, 2);
                             GUI.color = Color.white;
                         }
                         GUILayout.EndHorizontal();
 
                         GUILayout.BeginHorizontal();
                         {
-                            GUILayout.Label(menstruationsLength / 7 + "-weekly", GUILayout.Width(80));
-                            var mensUiItems = new GUIContent[] { new("N"), new("S"), new("D") };
+                            GUILayout.Label(menstruationsLength / 7 + "-週循環", GUILayout.Width(80));
+                            var mensUiItems = new GUIContent[] { new("普"), new("安"), new("危") };
                             for (var i = 0; i < menstruationsLength; i++)
                             {
                                 var mens = charasGameParam.menstruations[i];
@@ -354,7 +354,7 @@ namespace CheatTools
                                     GUI.color = Color.white;
                                     GUILayout.EndHorizontal();
                                     GUILayout.BeginHorizontal();
-                                    GUILayout.Label("schedule:", GUILayout.Width(80));
+                                    GUILayout.Label("週期表：", GUILayout.Width(80));
                                 }
                             }
                             GUI.color = Color.white;
@@ -370,7 +370,7 @@ namespace CheatTools
                     GUILayout.BeginVertical(GUI.skin.box);
                     if (isCopy)
                     {
-                        GUILayout.Label("Can't edit relationships of copied characters, open the main character first.");
+                        GUILayout.Label("無法編輯副本角色的關係，请先開啟主要角色。");
                     }
                     else
                     {
@@ -384,14 +384,14 @@ namespace CheatTools
 
                         GUILayout.BeginHorizontal();
 
-                        GUILayout.Label("Edit relationship with: ");
+                        GUILayout.Label("編輯與...的關係： ");
 
                         var targets = Manager.Game.saveData.Charas.AsManagedEnumerable().Select(x => x.Value).Where(x => x != null && !x.Equals(currentAdvChara)).ToArray();
 
                         _otherCharaListIndex = Math.Clamp(_otherCharaListIndex, -1, targets.Length - 1);
 
                         GUI.changed = false;
-                        var result = GUILayout.Toggle(_otherCharaListIndex == -1, "Everyone");
+                        var result = GUILayout.Toggle(_otherCharaListIndex == -1, "所有人");
                         if (GUI.changed)
                             _otherCharaListIndex = result ? -1 : 0;
 
@@ -415,13 +415,13 @@ namespace CheatTools
 
                             GUILayout.BeginHorizontal();
                             {
-                                GUILayout.Label("H Affinity:");
+                                GUILayout.Label("H 親和度：");
                                 GUILayout.FlexibleSpace();
-                                GUILayout.Label($"to lv{to.LV} {to.Point}pt", IMGUIUtils.LayoutOptionsExpandWidthFalse);
+                                GUILayout.Label($"對 -> lv{to.LV} {to.Point}pt", IMGUIUtils.LayoutOptionsExpandWidthFalse);
                                 if (GUILayout.Button("+1")) baseParameter.AddHAffinity(targetCharaId, 20);
                                 if (GUILayout.Button("0")) baseParameter.RemoveHAffinity(targetCharaId);
                                 GUILayout.FlexibleSpace();
-                                GUILayout.Label($"fro lv{fro.LV} {fro.Point}pt", IMGUIUtils.LayoutOptionsExpandWidthFalse);
+                                GUILayout.Label($"<- 來自 lv{fro.LV} {fro.Point}pt", IMGUIUtils.LayoutOptionsExpandWidthFalse);
                                 if (GUILayout.Button("+1")) targetBaseParameter.AddHAffinity(currentCharaId, 20);
                                 if (GUILayout.Button("0")) targetBaseParameter.RemoveHAffinity(currentCharaId);
 
@@ -432,8 +432,8 @@ namespace CheatTools
                         {
                             GUILayout.BeginHorizontal();
                             {
-                                GUILayout.Label("H Affinity with everyone: ");
-                                if (GUILayout.Button("Max lvl"))
+                                GUILayout.Label("與所有人的 H 親和度： ");
+                                if (GUILayout.Button("最高等級"))
                                 {
                                     var targetIds = targets.Select(x => x.TryGetActorId()).ToArray();
                                     foreach (var targetId in targetIds) baseParameter.AddHAffinity(targetId, 100);
@@ -441,7 +441,7 @@ namespace CheatTools
                                     var currentCharaId = currentAdvChara.TryGetActorId();
                                     foreach (var target in targets) target.charasGameParam.baseParameter.AddHAffinity(currentCharaId, 100);
                                 }
-                                if (GUILayout.Button("Set to 0"))
+                                if (GUILayout.Button("設為 0"))
                                 {
                                     var targetIds = targets.Select(x => x.TryGetActorId()).ToArray();
                                     foreach (var targetId in targetIds) baseParameter.RemoveHAffinity(targetId);
@@ -453,7 +453,7 @@ namespace CheatTools
                             GUILayout.EndHorizontal();
                         }
 
-                        GUILayout.Label("WARNING: BETA, settings may be reset by the game randomly. Save-Load the game after editing for best chance to make it work.");
+                        GUILayout.Label("警告：BETA 版，設定可能會被遊戲隨機重設。編輯後儲存並重新載入遊戲以獲得最佳成功機會。");
 
                         DrawSingleRankEditor(SensitivityKind.Love, currentAdvChara, targets);
                         DrawSingleRankEditor(SensitivityKind.Friend, currentAdvChara, targets);
@@ -472,47 +472,47 @@ namespace CheatTools
                 {
                     GUILayout.BeginVertical(GUI.skin.box);
                     {
-                        GUILayout.Label("Card stats (same as in the chara maker)");
+                        GUILayout.Label("角色卡數值 (與角色製作器中相同)");
 
-                        DrawUtils.DrawStrings("Job", new[] { "None", "Lifeguard", "Cafe", "Shrine" }, () => gameParam.job, b => gameParam.job = b);
-                        DrawUtils.DrawNums("Gayness", 5, () => gameParam.sexualTarget, b => gameParam.sexualTarget = b);
-                        DrawUtils.DrawNums(nameof(gameParam.lvChastity), 5, () => gameParam.lvChastity, b => gameParam.lvChastity = b);
-                        DrawUtils.DrawNums(nameof(gameParam.lvSociability), 5, () => gameParam.lvSociability, b => gameParam.lvSociability = b);
-                        DrawUtils.DrawNums(nameof(gameParam.lvTalk), 5, () => gameParam.lvTalk, b => gameParam.lvTalk = b);
-                        DrawUtils.DrawNums(nameof(gameParam.lvStudy), 5, () => gameParam.lvStudy, b => gameParam.lvStudy = b);
-                        DrawUtils.DrawNums(nameof(gameParam.lvLiving), 5, () => gameParam.lvLiving, b => gameParam.lvLiving = b);
-                        DrawUtils.DrawNums(nameof(gameParam.lvPhysical), 5, () => gameParam.lvPhysical, b => gameParam.lvPhysical = b);
-                        DrawUtils.DrawNums("Fighting style", 3, () => gameParam.lvDefeat, b => gameParam.lvDefeat = b);
+                        DrawUtils.DrawStrings("職業", new[] { "無", "救生員", "咖啡廳", "神社" }, () => gameParam.job, b => gameParam.job = b);
+                        DrawUtils.DrawNums("同性戀傾向", 5, () => gameParam.sexualTarget, b => gameParam.sexualTarget = b);
+                        DrawUtils.DrawNums("貞操等級", 5, () => gameParam.lvChastity, b => gameParam.lvChastity = b);
+                        DrawUtils.DrawNums("社交等級", 5, () => gameParam.lvSociability, b => gameParam.lvSociability = b);
+                        DrawUtils.DrawNums("對話等級", 5, () => gameParam.lvTalk, b => gameParam.lvTalk = b);
+                        DrawUtils.DrawNums("學習等級", 5, () => gameParam.lvStudy, b => gameParam.lvStudy = b);
+                        DrawUtils.DrawNums("生活等級", 5, () => gameParam.lvLiving, b => gameParam.lvLiving = b);
+                        DrawUtils.DrawNums("身體等級", 5, () => gameParam.lvPhysical, b => gameParam.lvPhysical = b);
+                        DrawUtils.DrawNums("戰鬥風格", 3, () => gameParam.lvDefeat, b => gameParam.lvDefeat = b);
 
-                        DrawUtils.DrawBool(nameof(gameParam.isVirgin), () => gameParam.isVirgin, b => gameParam.isVirgin = b);
-                        DrawUtils.DrawBool(nameof(gameParam.isAnalVirgin), () => gameParam.isAnalVirgin, b => gameParam.isAnalVirgin = b);
-                        DrawUtils.DrawBool(nameof(gameParam.isMaleVirgin), () => gameParam.isMaleVirgin, b => gameParam.isMaleVirgin = b);
-                        DrawUtils.DrawBool(nameof(gameParam.isMaleAnalVirgin), () => gameParam.isMaleAnalVirgin, b => gameParam.isMaleAnalVirgin = b);
+                        DrawUtils.DrawBool("是處女", () => gameParam.isVirgin, b => gameParam.isVirgin = b);
+                        DrawUtils.DrawBool("是肛交處女", () => gameParam.isAnalVirgin, b => gameParam.isAnalVirgin = b);
+                        DrawUtils.DrawBool("是男性處男", () => gameParam.isMaleVirgin, b => gameParam.isMaleVirgin = b);
+                        DrawUtils.DrawBool("是男性肛交處男", () => gameParam.isMaleAnalVirgin, b => gameParam.isMaleAnalVirgin = b);
                     }
                     GUILayout.EndVertical();
 
                     GUILayout.Space(6);
 
                     DrawBelongingsPicker(gameParam, comboboxMaxY);
-                    DrawTargetAnswersPicker(_hPreferenceDropdown, "H Preference", gameParam, sv => sv.preferenceH, comboboxMaxY);
-                    DrawTargetAnswersPicker(_traitsDropdown, "Trait", gameParam, sv => sv.individuality, comboboxMaxY);
+                    DrawTargetAnswersPicker(_hPreferenceDropdown, "H 偏好", gameParam, sv => sv.preferenceH, comboboxMaxY);
+                    DrawTargetAnswersPicker(_traitsDropdown, "特質", gameParam, sv => sv.individuality, comboboxMaxY);
                 }
 
-                if (gameParam != null && GUILayout.Button("Inspect GameParameter"))
+                if (gameParam != null && GUILayout.Button("檢視 GameParameter"))
                     Inspector.Instance.Push(new InstanceStackEntry(gameParam, "GameParam " + currentAdvChara.GetCharaName(true)), true);
 
-                if (charasGameParam != null && GUILayout.Button("Inspect CharactersGameParameter"))
+                if (charasGameParam != null && GUILayout.Button("檢視 CharactersGameParameter"))
                     Inspector.Instance.Push(new InstanceStackEntry(charasGameParam, "CharaGameParam " + currentAdvChara.GetCharaName(true)), true);
 
-                if (GUILayout.Button("Navigate to Character's GameObject"))
+                if (GUILayout.Button("導航至角色的遊戲物件 (GameObject)"))
                 {
                     if (currentAdvChara.transform)
                         ObjectTreeViewer.Instance.SelectAndShowObject(currentAdvChara.transform);
                     else
-                        CheatToolsPlugin.Logger.Log(LogLevel.Warning | LogLevel.Message, "Character has no body assigned");
+                        CheatToolsPlugin.Logger.Log(LogLevel.Warning | LogLevel.Message, "角色沒有分配身體模型");
                 }
 
-                if (GUILayout.Button("Open Character in inspector"))
+                if (GUILayout.Button("在檢視器中開啟角色"))
                     Inspector.Instance.Push(new InstanceStackEntry(currentAdvChara, "Actor " + currentAdvChara.GetCharaName(true)), true);
 
                 //if (GUILayout.Button("Inspect extended data"))
@@ -529,7 +529,7 @@ namespace CheatTools
 
             GUILayout.BeginVertical(GUI.skin.box);
 
-            GUILayout.Label("Items owned:");
+            GUILayout.Label("持有的物品：");
             var targetArr = gameParam.belongings;
             foreach (var gameParameterBelonging in targetArr)
             {
@@ -538,7 +538,7 @@ namespace CheatTools
                     if (gameParameterBelonging >= 0 && gameParameterBelonging < _belongingsDropdown.Contents.Length)
                         GUILayout.Label(_belongingsDropdown.Contents[gameParameterBelonging]);
                     else
-                        GUILayout.Label("Unknown item ID " + gameParameterBelonging);
+                        GUILayout.Label("未知的物品 ID " + gameParameterBelonging);
 
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("X", IMGUIUtils.LayoutOptionsExpandWidthFalse))
@@ -553,12 +553,12 @@ namespace CheatTools
             GUILayout.BeginHorizontal();
             {
                 _belongingsDropdown.Show(comboboxMaxY);
-                if (GUILayout.Button("GIVE", IMGUIUtils.LayoutOptionsExpandWidthFalse))
+                if (GUILayout.Button("給予", IMGUIUtils.LayoutOptionsExpandWidthFalse))
                 {
                     if (!gameParam.belongings.Contains(_belongingsDropdown.Index))
                         gameParam.belongings = new Il2CppStructArray<int>(targetArr.AddItem(_belongingsDropdown.Index).ToArray());
                 }
-                if (GUILayout.Button(new GUIContent("TO ALL", null, "Give this item to ALL characters if they don't already have it, including you."), IMGUIUtils.LayoutOptionsExpandWidthFalse))
+                if (GUILayout.Button(new GUIContent("給予所有人", null, "將此物品給予所有角色（如果他們尚未擁有），包含您自己。"), IMGUIUtils.LayoutOptionsExpandWidthFalse))
                 {
                     foreach (var chara in Manager.Game.Charas.AsManagedEnumerable().Select(x => x.Value))
                     {
@@ -580,7 +580,7 @@ namespace CheatTools
 
             GUILayout.BeginVertical(GUI.skin.box);
 
-            GUILayout.Label(name + ":");
+            GUILayout.Label(name + "：");
             var answerBase = targetAnswers(currentCharaData);
             var answerArr = answerBase.answer;
             foreach (var traitId in answerArr)
@@ -593,7 +593,7 @@ namespace CheatTools
                         GUILayout.Label(combobox.Contents[index]);
                     }
                     else
-                        GUILayout.Label($"Unknown {name} ID {traitId}");
+                        GUILayout.Label($"未知的 {name} ID {traitId}");
 
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("X", IMGUIUtils.LayoutOptionsExpandWidthFalse))
@@ -609,11 +609,11 @@ namespace CheatTools
                 combobox.Show(comboboxMaxY);
                 var selectedTraitIndex = combobox.ContentsIndexes[combobox.Index];
 
-                if (GUILayout.Button(new GUIContent("ADD", null, "If you add more than 2 entries they will work in-game, but will be removed after you save/load the game or the character.\n\nWARNING: Adding more than 3 traits or items can crash the game in some cases."), IMGUIUtils.LayoutOptionsExpandWidthFalse))
+                if (GUILayout.Button(new GUIContent("新增", null, "如果您新增超過 2 個項目，它們將在遊戲中生效，但在您儲存/載入遊戲或角色後將被移除。\n\n警告：在某些情況下，新增超過 3 個特質或物品可能會導致遊戲崩潰。"), IMGUIUtils.LayoutOptionsExpandWidthFalse))
                 {
                     SetAnswer(answerBase, selectedTraitIndex);
                 }
-                if (GUILayout.Button(new GUIContent("TO ALL", null, "Add this entry to ALL characters, including you."), IMGUIUtils.LayoutOptionsExpandWidthFalse))
+                if (GUILayout.Button(new GUIContent("新增至所有人", null, "將此項目新增至所有角色，包含您自己。"), IMGUIUtils.LayoutOptionsExpandWidthFalse))
                 {
                     foreach (var chara in Manager.Game.Charas.AsManagedEnumerable().Select(x => x.Value))
                         SetAnswer(targetAnswers(chara.charFile.GameParameter), selectedTraitIndex);
@@ -623,12 +623,12 @@ namespace CheatTools
 
             GUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button(new GUIContent("Clear ALL", null, "Remove all entries from ALL characters, leaving all lists empty."), IMGUIUtils.LayoutOptionsExpandWidthFalse))
+                if (GUILayout.Button(new GUIContent("全部清除", null, "從所有角色中移除所有項目，使所有列表為空。"), IMGUIUtils.LayoutOptionsExpandWidthFalse))
                 {
                     foreach (var chara in Manager.Game.Charas.AsManagedEnumerable().Select(x => x.Value))
                         targetAnswers(chara.charFile.GameParameter).answer = new Il2CppStructArray<int>(new[] { -1, -1 });
                 }
-                if (GUILayout.Button(new GUIContent("Trim ALL to 2", null, "Keep only the first two entries and remove the rest from ALL characters (leaving 2 entries per-character, the default limit)."), IMGUIUtils.LayoutOptionsExpandWidthFalse))
+                if (GUILayout.Button(new GUIContent("全部修剪至 2 個", null, "僅保留前兩個項目，並從所有角色中移除其餘項目（使每個角色保留 2 個項目，即預設限制）。"), IMGUIUtils.LayoutOptionsExpandWidthFalse))
                 {
                     foreach (var chara in Manager.Game.Charas.AsManagedEnumerable().Select(x => x.Value))
                     {
@@ -663,7 +663,7 @@ namespace CheatTools
             {
                 GUILayout.Label(kind + ":", GUILayout.Width(45));
 
-                GUILayout.Label(new GUIContent("to", null, "Current character's feelings towards the target character selected in the dropdown above.\nRanks: 0 - Low, 1 - Medium, 2 - High, 3 - Max"));
+                GUILayout.Label(new GUIContent("對 ->", null, "目前角色對上方下拉選單中所選目標角色的感情。\n等級：0 - 低，1 - 中，2 - 高，3 - 最高"));
 
                 if (affectedCharas.Count == 1)
                 {
@@ -674,7 +674,7 @@ namespace CheatTools
                 if (GUILayout.Button("+1")) OnOutgoing(1);
                 if (GUILayout.Button("-1")) OnOutgoing(-1);
 
-                GUILayout.Label(new GUIContent("from", null, "The target character's feelings towards current character."));
+                GUILayout.Label(new GUIContent("<- 來自", null, "目標角色對目前角色的感情。"));
 
                 if (affectedCharas.Count == 1)
                 {
